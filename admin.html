@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard</title>
+<style>
+* { box-sizing: border-box; font-family: Arial, sans-serif; }
+body { margin: 0; background: #f4f7fb; }
+header { background: white; padding: 15px; text-align: center; font-size: 20px; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+.menu-btn { position: fixed; top: 12px; left: 12px; background: #1877f2; color: white; padding: 8px 12px; border-radius: 8px; border: none; font-size: 14px; width: auto; cursor: pointer; }
+.sidebar { position: fixed; left: -260px; top: 0; width: 250px; height: 100%; background: white; box-shadow: 2px 0 5px rgba(0,0,0,0.1); transition: 0.3s; padding: 15px; z-index: 100; }
+.sidebar.open { left: 0; }
+.tab { margin: 15px 0; padding: 12px; border-radius: 10px; background: #f1f5f9; font-weight: bold; cursor: pointer; }
+.container { padding: 15px; }
+.cards { display: flex; gap: 10px; margin-bottom: 20px; }
+.card { background: white; flex: 1; padding: 15px; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); text-align: center; }
+input, select, button { width: 100%; padding: 10px; margin: 5px 0 10px; border-radius: 8px; border: 1px solid #ccc; }
+button { background: #1877f2; color: white; border: none; cursor: pointer; }
+.panel { display: none; background: white; padding: 15px; border-radius: 15px; margin-top: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+.panel.active { display: block; }
+.user-card { background: white; margin-bottom: 15px; padding: 15px; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.05); }
+.log { font-size: 13px; padding: 6px 0; border-bottom: 1px solid #eee; }
+.approve { background: green; margin-top: 10px; }
+.reject { background: red; margin-top: 5px; }
+</style>
+
+<!-- Firebase SDKs -->
+<script type="module">
+  // Import Firebase modules
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-analytics.js";
+  import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-database.js";
+
+  // Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyCrWspENBK3NIdOL_3MYFARJjYEqGwyJBc",
+    authDomain: "crk9villawalletdb.firebaseapp.com",
+    projectId: "crk9villawalletdb",
+    storageBucket: "crk9villawalletdb.firebasestorage.app",
+    messagingSenderId: "1058331545188",
+    appId: "1:1058331545188:web:c63da29d9981a6160f5971",
+    measurementId: "G-BD3SXK2VB5"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const database = getDatabase(app);
+
+  // Example: Save a test admin value
+  set(ref(database, 'adminTest'), { message: "Firebase initialized!" });
+</script>
+</head>
+<body>
+
+<header>Admin Dashboard</header>
+<button class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <button onclick="closeSidebar()" style="background:red; color:white; width:15%; margin-bottom:15px; padding:-10px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">❌</button>
+  
+  <div class="tab" onclick="showPanel('addUserPanel')">➕ Add User</div>
+  <div class="tab" onclick="showPanel('deleteUserPanel')">🗑 Delete User</div>
+  <div class="tab" onclick="showPanel('addTransPanel')">💳 Add Transaction</div>
+  <div class="tab" onclick="showPanel('viewUserPanel')">📄 View User History</div>
+  <div class="tab" onclick="showPanel('viewUsersPanel')">👥 View Users</div>
+  <div class="tab" onclick="showPanel('pendingPanel')">✅ Pending Deposits</div>
+  <div class="tab" onclick="showPanel('newUserNotificationsPanel')">🆕 New Users</div>
+</div>
+
+<div class="container">
+  <!-- Dashboard Cards -->
+  <div class="cards">
+    <div class="card">
+      <h3>Total Users</h3>
+      <p id="totalUsers">0</p>
+    </div>
+    <div class="card">
+      <h3>Total Balance</h3>
+      <p id="totalBalance">₦0</p>
+    </div>
+  </div>
+
+  <!-- Panels (Add User, Delete User, etc.) -->
+  <div class="panel" id="addUserPanel">
+    <h3>Add User</h3>
+    <input id="newUserName" placeholder="User name">
+    <input id="newUserEmail" placeholder="Email">
+    <input id="newUserPhone" placeholder="Phone number">
+    <input id="newUserCode" placeholder="4-digit code">
+    <button onclick="addUser()">Add User</button>
+  </div>
+
+  <div class="panel" id="deleteUserPanel">
+    <h3>Delete User</h3>
+    <input id="deleteCode" placeholder="User code">
+    <button onclick="deleteUser()">Delete User</button>
+  </div>
+
+  <div class="panel" id="addTransPanel">
+    <h3>Add Transaction</h3>
+    <input id="transCode" placeholder="User code">
+    <input id="transAmount" type="number" placeholder="Amount">
+    <select id="transType">
+      <option value="deposit">Deposit</option>
+      <option value="withdraw">Withdraw</option>
+    </select>
+    <button onclick="addTransaction()">Save Transaction</button>
+  </div>
+
+  <div class="panel" id="viewUserPanel">
+    <h3>View User History</h3>
+    <input id="searchCode" placeholder="User code">
+    <button onclick="viewUser()">View</button>
+    <div id="userHistory"></div>
+  </div>
+
+  <div class="panel" id="viewUsersPanel">
+    <h3>All Users</h3>
+    <table border="1" cellpadding="8" cellspacing="0" width="100%" style="border-collapse: collapse; text-align: left;">
+      <thead>
+        <tr style="background: #f1f5f9;">
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>4-Digit Code</th>
+        </tr>
+      </thead>
+      <tbody id="usersTableBody"></tbody>
+    </table>
+  </div>
+
+  <div class="panel" id="pendingPanel">
+    <h3>Pending Deposit Approvals</h3>
+    <div id="pendingList"></div>
+  </div>
+
+  <div class="panel" id="newUserNotificationsPanel">
+    <h3>New User Notifications</h3>
+    <div id="newUsersList"></div>
+  </div>
+</div>
+
+<script>
+/* Your previous admin dashboard JS goes here */
+let users = JSON.parse(localStorage.getItem("users")) || [];
+let pendingDeposits = JSON.parse(localStorage.getItem("pendingDeposits")) || [];
+let notifications = JSON.parse(localStorage.getItem("adminNotifications")) || [];
+
+function toggleMenu(){ sidebar.classList.toggle("open"); }
+function closeSidebar(){ sidebar.classList.remove("open"); }
+function showPanel(id){ document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active")); document.getElementById(id).classList.add("active"); closeSidebar(); }
+
+function saveAll(){ localStorage.setItem("users", JSON.stringify(users)); localStorage.setItem("pendingDeposits", JSON.stringify(pendingDeposits)); localStorage.setItem("adminNotifications", JSON.stringify(notifications)); updateDashboard(); }
+function updateDashboard(){ totalUsers.textContent = users.length; totalBalance.textContent = "₦"+users.reduce((s,u)=>s+u.balance,0); }
+
+function addUser(){ let name=newUserName.value.trim(); let email=newUserEmail.value.trim(); let phone=newUserPhone.value.trim(); let code=newUserCode.value.trim(); if(!name||!email||!phone||!code) return alert("Fill all fields"); users.push({name,email,phone,code,balance:0,history:[]}); notifications.push({type:"newUser", name, email, phone, code, date:new Date().toLocaleString()}); saveAll(); alert("User added and notification sent"); }
+
+function deleteUser(){ users = users.filter(u=>u.code!==deleteCode.value.trim()); saveAll(); }
+function addTransaction(){ let user=users.find(u=>u.code===transCode.value.trim()); let amt=Number(transAmount.value); let type=transType.value; if(!user) return alert("User not found"); if(type==="withdraw" && user.balance<amt) return alert("Insufficient balance"); if(type==="deposit") user.balance+=amt; else user.balance-=amt; user.history.push({type,amount:amt,date:new Date().toLocaleString()}); saveAll(); }
+function viewUser(){ let u=users.find(u=>u.code===searchCode.value.trim()); userHistory.innerHTML=u?u.history.map(h=>`<div class="log">${h.type} - ₦${h.amount}</div>`).join(""):"Not found"; }
+
+function loadUsersTable() { const tbody = document.getElementById("usersTableBody"); tbody.innerHTML = ""; if (!users.length) { tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">No users found</td></tr>`; return; } users.forEach(u => { tbody.innerHTML += `<tr><td>${u.name}</td><td>${u.email}</td><td>${u.phone}</td><td>${u.code}</td></tr>`; }); }
+loadUsersTable(); setInterval(loadUsersTable, 2000);
+
+function loadPending(){ const box = document.getElementById("pendingList"); box.innerHTML=""; if(!pendingDeposits.length){ box.innerHTML="No pending deposits"; return; } pendingDeposits.forEach((p,i)=>{ box.innerHTML+=`<div class="user-card"><b>${p.name}</b> (${p.code})<br>Amount: ₦${p.amount}<br>Receipt: ${p.receipt}<br><button class="approve" onclick="approve(${i})">Approve</button><button class="reject" onclick="reject(${i})">Reject</button></div>`; }); }
+function approve(i){ const p=pendingDeposits[i]; let user=users.find(u=>u.code===p.code); if(user){ user.balance+=p.amount; user.history.push({type:"deposit",amount:p.amount,date:new Date().toLocaleString(),status:"approved"}); } pendingDeposits.splice(i,1); saveAll(); loadPending(); }
+function reject(i){ pendingDeposits.splice(i,1); saveAll(); loadPending(); }
+
+function loadNewUserNotifications() { const listDiv = document.getElementById("newUsersList"); if (!users.length) { listDiv.innerHTML = "<p>No new users</p>"; return; } listDiv.innerHTML = ""; users.forEach(u => { if (!u.notified) { listDiv.innerHTML += `<div class="user-card"><strong>Name:</strong> ${u.name}<br><strong>Email:</strong> ${u.email}<br><strong>Phone:</strong> ${u.phone}<br><strong>Code:</strong> ${u.code}<br></div>`; u.notified = true; } }); localStorage.setItem("users", JSON.stringify(users)); }
+
+updateDashboard(); loadPending(); loadNewUserNotifications();
+</script>
+
+</body>
+</html>
