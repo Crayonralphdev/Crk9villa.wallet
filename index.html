@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cr_k9 Villa Wallet</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* Reset & base */
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Baloo 2', cursive; }
+body { background: #f4f7fb; overflow-x: hidden; }
+
+/* Hero Section */
+.hero {
+  position: relative;
+  height: 100vh;
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+}
+
+.hero img.logo {
+  width: 150px;
+  animation: floatLogo 3s ease-in-out infinite;
+}
+
+@keyframes floatLogo {
+  0%,100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+.hero h1 {
+  font-size: 3rem;
+  color: #333;
+  margin: 20px 0 10px;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  color: #555;
+  max-width: 600px;
+  margin-bottom: 30px;
+}
+
+.hero .buttons {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.hero .buttons a {
+  padding: 15px 30px;
+  border-radius: 50px;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.hero .buttons a.register {
+  background: #1877f2;
+}
+
+.hero .buttons a.register:hover {
+  background: #145dbf;
+}
+
+.hero .buttons a.login {
+  background: #f59ca9;
+}
+
+.hero .buttons a.login:hover {
+  background: #e03c5f;
+}
+
+/* Animated paw prints */
+.paw {
+  position: absolute;
+  width: 50px;
+  animation: movePaw linear infinite;
+}
+
+@keyframes movePaw {
+  0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+}
+
+/* Features Section */
+.features {
+  background: #fff;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.features h2 {
+  font-size: 2.5rem;
+  margin-bottom: 40px;
+}
+
+.features .cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+}
+
+.features .card {
+  background: #f4f7fb;
+  padding: 30px;
+  border-radius: 20px;
+  width: 250px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  transition: 0.3s;
+}
+
+.features .card:hover {
+  transform: translateY(-10px);
+}
+
+.features .card img {
+  width: 60px;
+  margin-bottom: 20px;
+}
+
+.features .card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.features .card p {
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Footer */
+footer {
+  background: #1877f2;
+  color: white;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+footer p {
+  margin-bottom: 10px;
+}
+
+footer a {
+  color: #f4f7fb;
+  text-decoration: underline;
+}
+
+@media (max-width: 768px){
+  .hero h1 { font-size: 2.2rem; }
+  .features .cards { flex-direction: column; align-items: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- Hero Section -->
+<section class="hero">
+  <img src="imgs/CrK9.png" alt="Cr_k9 Villa Wallet" class="logo">
+  <h1>Cr_k9 Villa Wallet</h1>
+  <p>Save for your pets’ needs: medical bills, food, and more. Keep your furry friends happy and healthy!</p>
+  <div class="buttons">
+    <a href="user_registration.html" class="register">Register Now</a>
+    <a href="user_login.html" class="login">Login</a>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+  <h2>Why Choose Cr_k9 Villa Wallet?</h2>
+  <div class="cards">
+    <div class="card">
+      <img src="https://img.icons8.com/emoji/96/money-bag-emoji.png"/>
+      <h3>Safe Savings</h3>
+      <p>Keep money specifically for your pets’ needs in a secure wallet.</p>
+    </div>
+    <div class="card">
+      <img src="https://img.icons8.com/emoji/96/dog-emoji.png"/>
+      <h3>Pet First</h3>
+      <p>Plan for vet visits, food, and other essentials for your furry friends.</p>
+    </div>
+    <div class="card">
+      <img src="https://img.icons8.com/emoji/96/scroll-emoji.png"/>
+      <h3>Track Expenses</h3>
+      <p>View your pet-related spending and savings at a glance.</p>
+    </div>
+    <div class="card">
+      <img src="https://img.icons8.com/emoji/96/star-emoji.png"/>
+      <h3>Easy & Fun</h3>
+      <p>Intuitive wallet experience, designed for pet lovers.</p>
+    </div>
+  </div>
+  <a href="https://api.whatsapp.com/send?phone=<YourNumber>&text=<Hello i need you help>"
+   target="_blank" 
+   style="
+     position: fixed;
+     bottom: 20px;
+     right: 20px;
+     background: #25D366;
+     color: white;
+     border-radius: 50%;
+     width: 60px;
+     height: 60px;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     font-size: 30px;
+     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+     z-index: 1000;
+     text-decoration: none;
+     transition: 0.3s;
+   "
+   onmouseover="this.style.transform='scale(1.1)';" 
+   onmouseout="this.style.transform='scale(1)';">
+   <img src="https://img.icons8.com/ios-filled/50/ffffff/whatsapp.png" alt="WhatsApp" style="width:30px;height:30px;">
+</a>
+  
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>&copy; 2025 Cr_k9 Villa. All rights reserved.</p>
+  <p>Follow us on <a href="#">Instagram</a> | <a href="#">Facebook</a></p>
+</footer>
+
+<!-- Paw Animations -->
+<img src="imgs/Paw1.png" class="paw" style="left:10%; animation-duration: 12s;">
+<img src="imgs/Paw2.png" class="paw" style="left:40%; animation-duration: 15s;">
+<img src="imgs/Paw3.png" class="paw" style="left:70%; animation-duration: 10s;">
+<img src="imgs/Paw1.png" class="paw" style="left:85%; animation-duration: 18s;">
+
+</body>
+</html>
