@@ -4,122 +4,75 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>User Registration</title>
-  <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-app.js";
-  import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-database.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyCrWspENBK3NIdOL_3MYFARJjYEqGwyJBc",
-    authDomain: "crk9villawalletdb.firebaseapp.com",
-    projectId: "crk9villawalletdb",
-    storageBucket: "crk9villawalletdb.firebasestorage.app",
-    messagingSenderId: "1058331545188",
-    appId: "1:1058331545188:web:c63da29d9981a6160f5971",
-    measurementId: "G-BD3SXK2VB5"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const database = getDatabase(app);
-
-  window.registerUser = function() {
-    let name = document.getElementById("regName").value.trim();
-    let email = document.getElementById("regEmail").value.trim();
-    let password = document.getElementById("regPassword").value.trim();
-    let code = document.getElementById("regCode").value.trim();
-
-    if (!name || !email || !password || !code) {
-      return alert("Fill all fields!");
-    }
-
-    // Check if user already exists
-    const dbRef = ref(database);
-    get(child(dbRef, `users/${code}`)).then((snapshot) => {
-      if (snapshot.exists()) {
-        alert("User with this code already exists!");
-      } else {
-        // Save user in Firebase database
-        set(ref(database, 'users/' + code), {
-          name: name,
-          email: email,
-          password: password,
-          code: code,
-          balance: 0,
-          history: []
-        });
-        alert("User registered successfully!");
-        // Optionally redirect to login page
-        window.location.href = "login.html";
-      }
-    }).catch((error) => {
-      console.error(error);
-      alert("Error registering user");
-    });
-  }
-  </script>
 <style>
-body { font-family: Arial, sans-serif; background: #f4f7fb; margin:0; display:flex; justify-content:center; align-items:center; height:100vh; }
+body { font-family: Arial; display:flex; justify-content:center; align-items:center; height:100vh; background:#f4f7fb; margin:0; }
 .container { background:white; padding:30px; border-radius:15px; box-shadow:0 4px 15px rgba(0,0,0,0.1); width:90%; max-width:400px; }
-h2 { text-align:center; margin-bottom:20px; }
 input { width:100%; padding:10px; margin:8px 0; border-radius:8px; border:1px solid #ccc; }
-button { width:100%; padding:10px; margin-top:10px; background:#1877f2; color:white; border:none; border-radius:10px; cursor:pointer; }
-p { text-align:center; margin-top:10px; }
-a { color:#1877f2; text-decoration:none; }
+button { width:100%; padding:10px; background:#1877f2; color:white; border:none; border-radius:10px; cursor:pointer; margin-top:10px; }
+a { text-decoration:none; color:#1877f2; }
 </style>
 </head>
 <body>
-
 <div class="container">
-<h2>Sign Up</h2>
-<input type="text" id="fullName" placeholder="Full Name">
-<input type="email" id="email" placeholder="Email">
-<input type="text" id="phone" placeholder="Phone Number">
-<input type="text" id="userCode" placeholder="4-digit Code" maxlength="4">
-<button onclick="registerUser()">Sign Up</button>
-<p>Already registered? <a href="user_login.html">Login here</a></p>
+  <h2>User Registration</h2>
+  <input type="text" id="regName" placeholder="Full Name">
+  <input type="email" id="regEmail" placeholder="Email">
+  <input type="text" id="regPhone" placeholder="Phone Number">
+  <input type="text" id="regCode" placeholder="4-digit Code">
+  <button onclick="register()">Sign Up</button>
+  <p>Already have an account? <a href="user_login.html">Login</a></p>
 </div>
 
-<!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-app.js";
+import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-database.js";
 
-<script>
 const firebaseConfig = {
   apiKey: "AIzaSyCrWspENBK3NIdOL_3MYFARJjYEqGwyJBc",
   authDomain: "crk9villawalletdb.firebaseapp.com",
+  databaseURL: "https://crk9villawalletdb-default-rtdb.firebaseio.com/",
   projectId: "crk9villawalletdb",
-  storageBucket: "crk9villawalletdb.firebasestorage.app",
+  storageBucket: "crk9villawalletdb.appspot.com",
   messagingSenderId: "1058331545188",
-  appId: "1:1058331545188:web:c63da29d9981a6160f5971",
-  measurementId: "G-BD3SXK2VB5"
+  appId: "1:1058331545188:web:c63da29d9981a6160f5971"
 };
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-function registerUser() {
-  let name = document.getElementById("fullName").value.trim();
-  let email = document.getElementById("email").value.trim();
-  let phone = document.getElementById("phone").value.trim();
-  let code = document.getElementById("userCode").value.trim();
+window.register = function() {
+  const name = document.getElementById("regName").value.trim();
+  const email = document.getElementById("regEmail").value.trim();
+  const phone = document.getElementById("regPhone").value.trim();
+  const code = document.getElementById("regCode").value.trim();
 
   if (!name || !email || !phone || !code) return alert("Fill all fields");
-  if (code.length !== 4) return alert("Code must be 4 digits");
+  if (!/^\d{4}$/.test(code)) return alert("Code must be 4 digits");
 
-  db.collection("users").doc(code).get().then(doc => {
-    if (doc.exists) return alert("Code already exists");
-
-    db.collection("users").doc(code).set({
-      name, email, phone, code, balance:0, history:[]
-    }).then(() => {
-      db.collection("adminNotifications").add({
-        type: "new_user", name, email, phone, code, date: new Date().toLocaleString()
-      });
-      alert("Registered successfully!");
-      window.location.href = "user_login.html";
-    });
-  });
+  // Check if user already exists
+  const dbRef = ref(db);
+  get(child(dbRef, `users/${code}`))
+    .then(snapshot => {
+      if (snapshot.exists()) {
+        alert("Code already registered, try another");
+      } else {
+        set(ref(db, `users/${code}`), {
+          name: name,
+          email: email,
+          phone: phone,
+          code: code,
+          balance: 0,
+          history: []
+        })
+        .then(() => {
+          alert("✅ Registration successful!");
+          window.location.href = "user_login.html";
+        })
+        .catch(err => alert("Error: " + err));
+      }
+    })
+    .catch(err => alert("Error checking user: " + err));
 }
 </script>
-
 </body>
 </html>
